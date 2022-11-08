@@ -1,0 +1,66 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+train=pd.read_csv('train.csv')
+test=pd.read_csv('test.csv')
+pd.set_option('display.max_rows',None)
+pd.set_option('display.max_columns',None)
+print(train)
+print(test)
+test.drop('id',axis=1,inplace=True)
+print(test.head)
+sns.countplot(train['price_range'])
+train.shape,test.shape
+train.isnull().sum()
+train.info()
+train.describe()
+train.plot(x='price_range',y='ram',kind='scatter')
+plt.show()
+plt.figure(figsize=(20,20))
+sns.heatmap(train.corr(),annot=True,cmap=plt.cm.Accent_r)
+plt.show()
+train.plot(kind='box',figsize=(20,20))
+X=train.drop('price_range',axis=1)
+Y=train['price_range']
+from sklearn.model_selection import train_test_split
+x_train,x_test,y_train,y_test=train_test_split(X,Y,test_size=0.1,random_state=101)
+from sklearn.preprocessing import StandardScaler
+sc=StandardScaler()
+x_train=sc.fit_transform(x_train)
+x_test=sc.transform(x_test)
+test=sc.transform(test)
+print(x_train)
+print(x_test)
+print(test)
+from sklearn.tree import DecisionTreeClassifier
+dtc=DecisionTreeClassifier()
+dtc.fit(x_train,y_train)
+pred=dtc.predict(x_test)
+print(pred)
+from sklearn.metrics import accuracy_score,confusion_matrix
+dtc_acc=accuracy_score(pred,y_test)
+print(dtc_acc)
+print(confusion_matrix(pred,y_test))
+from sklearn.svm import SVC
+knn=SVC()
+knn.fit(x_train,y_train)
+prediction=knn.predict(x_test)
+prediction
+from sklearn.metrics import accuracy_score
+svc_acc=accuracy_score(prediction,y_test)
+print(svc_acc)
+print(confusion_matrix(prediction,y_test))
+from sklearn.linear_model import LogisticRegression
+lr=LogisticRegression()
+lr.fit(x_train,y_train)
+prediction2=lr.predict(x_test)
+print(prediction2)
+from sklearn.metrics import accuracy_score
+lr_acc=accuracy_score(prediction2,y_test)
+print(lr_acc)
+print(confusion_matrix(prediction2,y_test))
+plt.bar(x=['dtc','svc','lr'],height=[dtc_acc,svc_acc,lr_acc])
+plt.xlabel("Algorithms")
+plt.ylabel("Accuracy Score")
+plt.show()
+lr.predict(test)
